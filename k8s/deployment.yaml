@@ -15,5 +15,6 @@ spec:
       containers:
         - name: python-app
           image: test-app-ci-cd:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 5000
