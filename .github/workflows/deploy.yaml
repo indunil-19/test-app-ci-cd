@@ -1,40 +1,31 @@
-name: Build & Deploy to Kubernetes
+name: Build & Deploy to Oracle Kubernetes
 
 on:
   push:
     branches:
       - main
 
-env:
-  IMAGE_NAME: ghcr.io/${{ github.repository }}
-
 jobs:
   deploy:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
+    # 👇 THIS is the key line you asked for
+    runs-on: self-hosted
 
     steps:
-      - name: Checkout code
+      # 1️⃣ Pull code onto the Oracle VM
+      - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Login to GHCR
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Build and push Docker image
+      # 2️⃣ Build Docker image locally on Oracle VM (ARM)
+      - name: Build Docker image
         run: |
-          docker build -t $IMAGE_NAME:latest .
-          docker push $IMAGE_NAME:latest
+          docker build -t test-app-ci-cd:latest .
 
-      - name: Configure kubeconfig
+      # 3️⃣ (Optional) Show cluster connection
+      - name: Verify Kubernetes access
         run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
+          kubectl get nodes
 
-      - name: Deploy to Kubernetes
-        run: kubectl apply -f k8s/
+      # 4️⃣ Deploy to Kubernetes
+      - name: Deploy application
+        run: |
+          kubectl apply -f k8s/
