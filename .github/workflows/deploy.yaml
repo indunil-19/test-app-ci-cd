@@ -1,4 +1,4 @@
-name: Deploy to Oracle Kubernetes
+name: Build & Deploy to Oracle Kubernetes
 
 on:
   push:
@@ -7,18 +7,26 @@ on:
 
 jobs:
   deploy:
-    runs-on: self-hosted
+    # 👇 THIS is the key line you asked for
+    runs-on: [ self-hosted, Linux, ARM64]
+
 
     steps:
-      - name: Checkout code
+      # 1️⃣ Pull code onto the Oracle VM
+      - name: Checkout source code
         uses: actions/checkout@v4
 
-      - name: Set kubeconfig
+      # 2️⃣ Build Docker image locally on Oracle VM (ARM)
+      - name: Build Docker image
         run: |
-          mkdir -p ~/.kube
-          cp /home/ubuntu/.kube/config ~/.kube/config
-          chmod 600 ~/.kube/config
+          docker build -t test-app-ci-cd:latest .
 
-      - name: Deploy to Kubernetes
+      # 3️⃣ (Optional) Show cluster connection
+      - name: Verify Kubernetes access
+        run: |
+          kubectl get nodes
+
+      # 4️⃣ Deploy to Kubernetes
+      - name: Deploy application
         run: |
           kubectl apply -f k8s/
