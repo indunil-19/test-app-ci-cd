@@ -20,6 +20,11 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t test-app-ci-cd:latest .
+      
+      # 2b️⃣ Save and load image into containerd (Kubernetes runtime)
+      - name: Load image into Kubernetes runtime
+        run: |
+          docker save test-app-ci-cd:latest | sudo ctr -n k8s.io images import -
 
       # 3️⃣ (Optional) Show cluster connection
       - name: Verify Kubernetes access
