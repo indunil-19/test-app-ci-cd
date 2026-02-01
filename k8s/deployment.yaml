@@ -14,6 +14,6 @@ spec:
     spec:
       containers:
         - name: python-app
-          image: ghcr.io/indunil-19/test-app-ci-cd:latest
+          image: test-app-ci-cd:latest
           ports:
             - containerPort: 5000
