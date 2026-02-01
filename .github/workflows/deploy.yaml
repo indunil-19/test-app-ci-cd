@@ -8,7 +8,7 @@ on:
 jobs:
   deploy:
     # 👇 THIS is the key line you asked for
-    runs-on: [self-hosted, oracle, arm]
+    runs-on: self-hosted
 
     steps:
       # 1️⃣ Pull code onto the Oracle VM
