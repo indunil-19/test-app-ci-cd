@@ -16,15 +16,10 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
-      # 2️⃣ Build Docker image locally on Oracle VM (ARM)
-      - name: Build Docker image
+      # 2️⃣ Build image directly in containerd (Kubernetes runtime)
+      - name: Build image in Kubernetes runtime
         run: |
-          docker build -t test-app-ci-cd:latest .
-      
-      # 2b️⃣ Save and load image into containerd (Kubernetes runtime)
-      - name: Load image into Kubernetes runtime
-        run: |
-          docker save test-app-ci-cd:latest | sudo ctr -n k8s.io images import -
+          sudo nerdctl -n k8s.io build -t test-app-ci-cd:latest .
 
       # 3️⃣ (Optional) Show cluster connection
       - name: Verify Kubernetes access
